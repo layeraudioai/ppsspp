@@ -304,10 +304,22 @@ std::string StringFromFormat(const char* format, ...) {
 	va_end(args);
 #else
 	char *buf = nullptr;
-
 	va_start(args, format);
+
+	// vasprintf is a GNU extension and not available on all platforms.
+#if defined(DEVKITPRO)
+	va_list args_copy;
+	va_copy(args_copy, args);
+	int len = vsnprintf(nullptr, 0, format, args_copy);
+	va_end(args_copy);
+	if (len >= 0) {
+		buf = (char *)malloc(len + 1);
+		vsnprintf(buf, len + 1, format, args);
+	}
+#else
 	if (vasprintf(&buf, format, args) < 0)
 		buf = nullptr;
+#endif
 	va_end(args);
 
 	if (buf != nullptr) {

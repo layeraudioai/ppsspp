@@ -110,6 +110,7 @@ endif()
 # Support for devkitPro platforms
 if(DEFINED ENV{DEVKITPRO} OR CMAKE_TOOLCHAIN_FILE MATCHES "devkitpro" OR NDS OR THREEDS OR WII OR WIIU)
     set(DEVKITPRO ON)
+    add_compile_definitions(DEVKITPRO)
     message(STATUS "DevkitPro build detected.")
     if(NDS OR CMAKE_TOOLCHAIN_FILE MATCHES "NDS")
         set(PLATFORM_NDS ON)
@@ -165,6 +166,17 @@ if(PLATFORM_NDS)
     set(OPENXR OFF)
     # NDS does not have OpenGL. Set this to avoid find_package(OpenGL).
     set(OPENGL_LIBRARIES "")
+
+    # Force disable all JITs for NDS
+    set(ARMV7_DEVICE OFF)
+    set(ARM_DEVICE OFF)
+    set(MIPS_DEVICE OFF)
+    set(RISCV64_DEVICE OFF)
+    set(LOONGARCH64_DEVICE OFF)
+    set(X86_DEVICE OFF)
+    set(X86_64_DEVICE OFF)
+    set(ARM64 OFF)
+    set(PPC_DEVICE OFF)
 endif()
 
 if(PLATFORM_3DS)
@@ -736,6 +748,63 @@ include_directories(ext/OpenXR-SDK/include)
 # For ext/sol includes, that are usually included as sol/*.hpp
 include_directories(ext)
 
+set(CommonGLSources)
+if(NOT (PLATFORM_NDS OR PLATFORM_WII))
+	list(APPEND CommonGLSources
+		Common/GPU/OpenGL/GLCommon.h
+		Common/GPU/OpenGL/GLDebugLog.cpp
+		Common/GPU/OpenGL/GLDebugLog.h
+		Common/GPU/OpenGL/GLSLProgram.cpp
+		Common/GPU/OpenGL/GLSLProgram.h
+		Common/GPU/OpenGL/gl3stub.c
+		Common/GPU/OpenGL/gl3stub.h
+		Common/GPU/OpenGL/GLFeatures.cpp
+		Common/GPU/OpenGL/GLFeatures.h
+		Common/GPU/OpenGL/GLFrameData.cpp
+		Common/GPU/OpenGL/GLFrameData.h
+		Common/GPU/OpenGL/thin3d_gl.cpp
+		Common/GPU/OpenGL/GLMemory.cpp
+		Common/GPU/OpenGL/GLMemory.h
+		Common/GPU/OpenGL/GLRenderManager.cpp
+		Common/GPU/OpenGL/GLRenderManager.h
+		Common/GPU/OpenGL/GLQueueRunner.cpp
+		Common/GPU/OpenGL/GLQueueRunner.h
+		Common/GPU/OpenGL/DataFormatGL.cpp
+		Common/GPU/OpenGL/DataFormatGL.h
+	)
+endif()
+
+set(CommonVulkanSources)
+if(VULKAN)
+	list(APPEND CommonVulkanSources
+		Common/GPU/Vulkan/VulkanBarrier.cpp
+		Common/GPU/Vulkan/VulkanBarrier.h
+		Common/GPU/Vulkan/VulkanDebug.cpp
+		Common/GPU/Vulkan/VulkanDebug.h
+		Common/GPU/Vulkan/VulkanContext.cpp
+		Common/GPU/Vulkan/VulkanContext.h
+		Common/GPU/Vulkan/VulkanDescSet.cpp
+		Common/GPU/Vulkan/VulkanDescSet.h
+		Common/GPU/Vulkan/VulkanFramebuffer.cpp
+		Common/GPU/Vulkan/VulkanFramebuffer.h
+		Common/GPU/Vulkan/VulkanImage.cpp
+		Common/GPU/Vulkan/VulkanImage.h
+		Common/GPU/Vulkan/VulkanLoader.cpp
+		Common/GPU/Vulkan/VulkanLoader.h
+		Common/GPU/Vulkan/VulkanMemory.cpp
+		Common/GPU/Vulkan/VulkanMemory.h
+		Common/GPU/Vulkan/VulkanProfiler.cpp
+		Common/GPU/Vulkan/VulkanProfiler.h
+		Common/GPU/Vulkan/thin3d_vulkan.cpp
+		Common/GPU/Vulkan/VulkanRenderManager.cpp
+		Common/GPU/Vulkan/VulkanRenderManager.h
+		Common/GPU/Vulkan/VulkanQueueRunner.cpp
+		Common/GPU/Vulkan/VulkanQueueRunner.h
+		Common/GPU/Vulkan/VulkanFrameData.cpp
+		Common/GPU/Vulkan/VulkanFrameData.h
+	)
+endif()
+
 add_library(Common STATIC
 	${CommonX86}
 	${CommonARM}
@@ -839,51 +908,8 @@ add_library(Common STATIC
 	Common/GPU/ShaderWriter.h
 	Common/GPU/ShaderTranslation.h
 	Common/GPU/ShaderTranslation.cpp
-	Common/GPU/OpenGL/GLCommon.h
-	Common/GPU/OpenGL/GLDebugLog.cpp
-	Common/GPU/OpenGL/GLDebugLog.h
-	Common/GPU/OpenGL/GLSLProgram.cpp
-	Common/GPU/OpenGL/GLSLProgram.h
-	Common/GPU/OpenGL/gl3stub.c
-	Common/GPU/OpenGL/gl3stub.h
-	Common/GPU/OpenGL/GLFeatures.cpp
-	Common/GPU/OpenGL/GLFeatures.h
-	Common/GPU/OpenGL/GLFrameData.cpp
-	Common/GPU/OpenGL/GLFrameData.h
-	Common/GPU/OpenGL/thin3d_gl.cpp
-	Common/GPU/OpenGL/GLMemory.cpp
-	Common/GPU/OpenGL/GLMemory.h
-	Common/GPU/OpenGL/GLRenderManager.cpp
-	Common/GPU/OpenGL/GLRenderManager.h
-	Common/GPU/OpenGL/GLQueueRunner.cpp
-	Common/GPU/OpenGL/GLQueueRunner.h
-	Common/GPU/OpenGL/DataFormatGL.cpp
-	Common/GPU/OpenGL/DataFormatGL.h
-	Common/GPU/Vulkan/VulkanBarrier.cpp
-	Common/GPU/Vulkan/VulkanBarrier.h
-	Common/GPU/Vulkan/VulkanDebug.cpp
-	Common/GPU/Vulkan/VulkanDebug.h
-	Common/GPU/Vulkan/VulkanContext.cpp
-	Common/GPU/Vulkan/VulkanContext.h
-	Common/GPU/Vulkan/VulkanDescSet.cpp
-	Common/GPU/Vulkan/VulkanDescSet.h
-	Common/GPU/Vulkan/VulkanFramebuffer.cpp
-	Common/GPU/Vulkan/VulkanFramebuffer.h
-	Common/GPU/Vulkan/VulkanImage.cpp
-	Common/GPU/Vulkan/VulkanImage.h
-	Common/GPU/Vulkan/VulkanLoader.cpp
-	Common/GPU/Vulkan/VulkanLoader.h
-	Common/GPU/Vulkan/VulkanMemory.cpp
-	Common/GPU/Vulkan/VulkanMemory.h
-	Common/GPU/Vulkan/VulkanProfiler.cpp
-	Common/GPU/Vulkan/VulkanProfiler.h
-	Common/GPU/Vulkan/thin3d_vulkan.cpp
-	Common/GPU/Vulkan/VulkanRenderManager.cpp
-	Common/GPU/Vulkan/VulkanRenderManager.h
-	Common/GPU/Vulkan/VulkanQueueRunner.cpp
-	Common/GPU/Vulkan/VulkanQueueRunner.h
-	Common/GPU/Vulkan/VulkanFrameData.cpp
-	Common/GPU/Vulkan/VulkanFrameData.h
+	${CommonGLSources}
+	${CommonVulkanSources}
 	Common/Input/GestureDetector.cpp
 	Common/Input/GestureDetector.h
 	Common/Input/KeyCodes.h
@@ -2647,7 +2673,9 @@ if(ANDROID)
 	endif()
 endif()
 
-list(APPEND CoreExtraLibs armips)
+if(NOT PLATFORM_NDS)
+	list(APPEND CoreExtraLibs armips)
+endif()
 
 # needed for VK_USE_PLATFORM_XCB_KHR only
 #if(VULKAN AND NOT WIN32)
@@ -2680,8 +2708,13 @@ endif()
 
 include_directories(ext/libchdr/include)
 
-target_link_libraries(${CoreLibName} Common native chdr kirk cityhash sfmt19937 xbrz xxhash rcheevos minimp3 at3_standalone lua ${GlslangLibs}
+set(CoreLinkLibs Common native chdr kirk cityhash sfmt19937 xbrz xxhash rcheevos minimp3 at3_standalone lua ${GlslangLibs}
 	${CoreExtraLibs} ${OPENGL_LIBRARIES} ${X11_LIBRARIES} ${CMAKE_DL_LIBS})
+if(PLATFORM_NDS)
+	list(REMOVE_ITEM CoreLinkLibs chdr)
+endif()
+
+target_link_libraries(${CoreLibName} ${CoreLinkLibs})
 
 # Winsock
 if(WIN32)

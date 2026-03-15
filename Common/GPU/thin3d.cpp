@@ -533,23 +533,23 @@ void ConvertFromRGBA8888(uint8_t *dst, const uint8_t *src, uint32_t dstStride, u
 		// But here it shouldn't matter if they do intersect
 		uint16_t *dst16 = (uint16_t *)dst;
 		switch (format) {
-		case Draw::DataFormat::R5G6B5_UNORM_PACK16: // BGR 565
+		case Draw::DataFormat::R5G6B5_UNORM_PACK16:
 			for (uint32_t y = 0; y < height; ++y) {
-				ConvertRGBA8888ToRGB565(dst16, src32, width);
+				ConvertRGBA8888ToRGB565(dst16, (const u32 *)src32, width);
 				src32 += srcStride;
 				dst16 += dstStride;
 			}
 			break;
-		case Draw::DataFormat::A1R5G5B5_UNORM_PACK16: // ABGR 1555
+		case Draw::DataFormat::A1R5G5B5_UNORM_PACK16:
 			for (uint32_t y = 0; y < height; ++y) {
-				ConvertRGBA8888ToRGBA5551(dst16, src32, width);
+				ConvertRGBA8888ToRGBA5551(dst16, (const u32 *)src32, width);
 				src32 += srcStride;
 				dst16 += dstStride;
 			}
 			break;
-		case Draw::DataFormat::A4R4G4B4_UNORM_PACK16: // ABGR 4444
+		case Draw::DataFormat::A4R4G4B4_UNORM_PACK16:
 			for (uint32_t y = 0; y < height; ++y) {
-				ConvertRGBA8888ToRGBA4444(dst16, src32, width);
+				ConvertRGBA8888ToRGBA4444(dst16, (const u32 *)src32, width);
 				src32 += srcStride;
 				dst16 += dstStride;
 			}
@@ -581,13 +581,13 @@ void ConvertFromBGRA8888(uint8_t *dst, const uint8_t *src, uint32_t dstStride, u
 	} else if (format == Draw::DataFormat::R8G8B8A8_UNORM) {
 		uint32_t *dst32 = (uint32_t *)dst;
 		for (uint32_t y = 0; y < height; ++y) {
-			ConvertBGRA8888ToRGBA8888(dst32, src32, width);
+			ConvertBGRA8888ToRGBA8888(dst32, (const u32 *)src32, width);
 			src32 += srcStride;
 			dst32 += dstStride;
 		}
 	} else if (format == Draw::DataFormat::R8G8B8_UNORM) {
 		for (uint32_t y = 0; y < height; ++y) {
-			ConvertBGRA8888ToRGB888(dst, src32, width);
+			ConvertBGRA8888ToRGB888(dst, (const u32 *)src32, width);
 			src32 += srcStride;
 			dst += dstStride * 3;
 		}
@@ -595,23 +595,23 @@ void ConvertFromBGRA8888(uint8_t *dst, const uint8_t *src, uint32_t dstStride, u
 		// But here it shouldn't matter if they do intersect
 		uint16_t *dst16 = (uint16_t *)dst;
 		switch (format) {
-		case Draw::DataFormat::R5G6B5_UNORM_PACK16: // BGR 565
+		case Draw::DataFormat::R5G6B5_UNORM_PACK16:
 			for (uint32_t y = 0; y < height; ++y) {
-				ConvertBGRA8888ToRGB565(dst16, src32, width);
+				ConvertBGRA8888ToRGB565(dst16, (const u32 *)src32, width);
 				src32 += srcStride;
 				dst16 += dstStride;
 			}
 			break;
-		case Draw::DataFormat::A1R5G5B5_UNORM_PACK16: // ABGR 1555
+		case Draw::DataFormat::A1R5G5B5_UNORM_PACK16:
 			for (uint32_t y = 0; y < height; ++y) {
-				ConvertBGRA8888ToRGBA5551(dst16, src32, width);
+				ConvertBGRA8888ToRGBA5551(dst16, (const u32 *)src32, width);
 				src32 += srcStride;
 				dst16 += dstStride;
 			}
 			break;
-		case Draw::DataFormat::A4R4G4B4_UNORM_PACK16: // ABGR 4444
+		case Draw::DataFormat::A4R4G4B4_UNORM_PACK16:
 			for (uint32_t y = 0; y < height; ++y) {
-				ConvertBGRA8888ToRGBA4444(dst16, src32, width);
+				ConvertBGRA8888ToRGBA4444(dst16, (const u32 *)src32, width);
 				src32 += srcStride;
 				dst16 += dstStride;
 			}

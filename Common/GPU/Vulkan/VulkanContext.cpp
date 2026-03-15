@@ -1413,11 +1413,11 @@ bool VulkanContext::InitSwapchain(VkPresentModeKHR desiredPresentMode) {
 	swapChainExtent_.width = clamp(currentExtent.width, surfCapabilities_.minImageExtent.width, surfCapabilities_.maxImageExtent.width);
 	swapChainExtent_.height = clamp(currentExtent.height, surfCapabilities_.minImageExtent.height, surfCapabilities_.maxImageExtent.height);
 
-	INFO_LOG(Log::G3D, "surfCapabilities_.current: %dx%d min: %dx%d max: %dx%d computed: %dx%d",
-		currentExtent.width, currentExtent.height,
-		surfCapabilities_.minImageExtent.width, surfCapabilities_.minImageExtent.height,
-		surfCapabilities_.maxImageExtent.width, surfCapabilities_.maxImageExtent.height,
-		swapChainExtent_.width, swapChainExtent_.height);
+	INFO_LOG(Log::G3D, "surfCapabilities_.current: %lux%lu min: %lux%lu max: %lux%lu computed: %lux%lu",
+		(unsigned long)currentExtent.width, (unsigned long)currentExtent.height,
+		(unsigned long)surfCapabilities_.minImageExtent.width, (unsigned long)surfCapabilities_.minImageExtent.height,
+		(unsigned long)surfCapabilities_.maxImageExtent.width, (unsigned long)surfCapabilities_.maxImageExtent.height,
+		(unsigned long)swapChainExtent_.width, (unsigned long)swapChainExtent_.height);
 
 	// TODO: Find a better way to specify the prioritized present mode while being able
 	// to fall back in a sensible way.
@@ -1560,7 +1560,7 @@ bool VulkanContext::InitSwapchain(VkPresentModeKHR desiredPresentMode) {
 		ERROR_LOG(Log::G3D, "vkCreateSwapchainKHR failed! %s", VulkanResultToString(res));
 		return false;
 	}
-	INFO_LOG(Log::G3D, "Created swapchain: %dx%d %s", swap_chain_info.imageExtent.width, swap_chain_info.imageExtent.height, (surfCapabilities_.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT) ? "(TRANSFER_SRC_BIT supported)" : "");
+	INFO_LOG(Log::G3D, "Created swapchain: %lux%lu %s", (unsigned long)swap_chain_info.imageExtent.width, (unsigned long)swap_chain_info.imageExtent.height, (surfCapabilities_.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT) ? "(TRANSFER_SRC_BIT supported)" : "");
 	swapchainInited_ = true;
 
 	if (oldSwapchain != VK_NULL_HANDLE) {
