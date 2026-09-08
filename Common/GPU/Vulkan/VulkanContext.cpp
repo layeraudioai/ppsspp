@@ -1682,7 +1682,7 @@ bool VulkanContext::InitSwapchain(VkPresentModeKHR desiredPresentMode) {
 		ERROR_LOG(Log::G3D, "vkCreateSwapchainKHR failed! %s", VulkanResultToString(res));
 		return false;
 	}
-	INFO_LOG(Log::G3D, "Created swapchain: %dx%d %s", swap_chain_info.imageExtent.width, swap_chain_info.imageExtent.height, (surfCapabilities_.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT) ? "(TRANSFER_SRC_BIT supported)" : "");
+	INFO_LOG(Log::G3D, "Created swapchain: %lux%lu %s", (unsigned long)swap_chain_info.imageExtent.width, (unsigned long)swap_chain_info.imageExtent.height, (surfCapabilities_.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT) ? "(TRANSFER_SRC_BIT supported)" : "");
 	swapchainInited_ = true;
 
 	if (oldSwapchain != VK_NULL_HANDLE) {

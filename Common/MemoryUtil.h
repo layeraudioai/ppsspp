@@ -18,12 +18,12 @@
 #pragma once
 
 #ifndef _WIN32
-#ifndef __SWITCH__
-#include <sys/mman.h>
-#else
+#if defined(__SWITCH__)
 #include <switch.h>
-#endif // !__SWITCH__
-#endif
+#elif !defined(DEVKITPRO)
+#include <sys/mman.h>
+#endif // __SWITCH__
+#endif // _WIN32
 #include <stdint.h>
 
 // Returns true if we need to avoid setting both writable and executable at the same time (W^X)
