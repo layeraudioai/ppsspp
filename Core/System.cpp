@@ -318,10 +318,17 @@ static void MountFileSystems() {
 	pspFileSystem.Mount("pfat0:", memstickSystem);
 
 	// TODO: These should be made "lazy" mounts.
+#if PPSSPP_PLATFORM(3DS)
+	// On 3DS, flash0 is typically in RomFS.
+	// For now, stub or map to a directory on SD card if necessary.
+	auto flash0System = std::make_shared<DirectoryFileSystem>(&pspFileSystem, "romfs:/flash0", FileSystemFlags::FLASH);
+	pspFileSystem.Mount("flash0:", flash0System);
+#else
 	auto flash0System = std::make_shared<DirectoryFileSystem>(&pspFileSystem, g_Config.nandRootDirectory / "flash0", FileSystemFlags::FLASH);
 	auto flash1System = std::make_shared<DirectoryFileSystem>(&pspFileSystem, g_Config.nandRootDirectory / "flash1", FileSystemFlags::FLASH);
 	pspFileSystem.Mount("flash0:", flash0System);
 	pspFileSystem.Mount("flash1:", flash1System);
+#endif
 
 	// NOTE: We don't handle the host0: mount here, it's in Load_PSP_ELF_PBP.
 

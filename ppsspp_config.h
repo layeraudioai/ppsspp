@@ -115,6 +115,8 @@
     #else
         #error "Unknown Apple platform"
     #endif
+#elif defined(__3DS__)
+    #define PPSSPP_PLATFORM_3DS 1
 #elif defined(__SWITCH__)
     #define PPSSPP_PLATFORM_SWITCH 1
 #elif defined(__ANDROID__)

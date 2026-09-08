@@ -79,9 +79,14 @@ if(CMAKE_SYSTEM_PROCESSOR)
 	endif()
 endif()
 
-# the libraries in the ffmpeg/ directory are not compatible with mingw
-if(MINGW AND NOT USE_SYSTEM_FFMPEG AND NOT BUILD_BUNDLED_FFMPEG)
-	set(USE_SYSTEM_FFMPEG ON)
+
+if(USE_3DS)
+	# Assuming buildtools are in the path or provided by devkitARM
+	add_custom_command(TARGET PPSSPP POST_BUILD
+		COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/romfs
+		COMMAND cp -r ${CMAKE_SOURCE_DIR}/assets/flash0 ${CMAKE_CURRENT_BINARY_DIR}/romfs/
+		COMMAND 3dsxtool ${CMAKE_CURRENT_BINARY_DIR}/PPSSPP.elf PPSSPP.3dsx --romfs=${CMAKE_CURRENT_BINARY_DIR}/romfs
+	)
 endif()
 
 if(NOT ANDROID AND NOT IOS)
@@ -190,6 +195,7 @@ option(SIMULATOR "Set to ON when targeting an x86 simulator of an ARM platform" 
 option(LIBRETRO "Set to ON to generate the libretro target" OFF)
 # :: Options
 option(USE_LIBNX "Set to ON to build for Switch(libnx)" OFF)
+option(USE_3DS "Set to ON to build for 3DS" OFF)
 option(USE_FFMPEG "Build with FFMPEG support" ON)
 option(USE_DISCORD "Build with Discord support" ON)
 option(USE_MINIUPNPC "Build with miniUPnPc support" ON)
